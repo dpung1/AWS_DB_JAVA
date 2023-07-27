@@ -75,7 +75,7 @@ public class ProductColorRepository {
 		ProductColor productColor = null;
 		
 		try {
-			con = pool. getConnection();
+			con = pool.getConnection();
 			String sql = "select " 
 					+ "product_color_id, "
 					+ "product_color_name "

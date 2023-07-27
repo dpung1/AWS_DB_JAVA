@@ -2,6 +2,8 @@ package repository;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import config.DBConnectionMgr;
@@ -22,6 +24,44 @@ public class ProductRepository {
 		}
 		
 		return instance;
+	}
+	
+	public Product findProductByProductName(String productName) {
+		
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Product product = null;
+		
+		try {
+			con = pool.getConnection();
+			String sql = "select "
+					+ "product_id, "
+					+ "product_name "
+					+ "from "
+					+ "product_tb "
+					+ "where "
+					+ "product_name = ?";
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, productName);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				product = Product.builder()
+						.productId(rs.getInt(1))
+						.productName(rs.getString(2))
+						.build();
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		
+		return product;
+		
 	}
 	
 	public int saveProduct(Product product) {

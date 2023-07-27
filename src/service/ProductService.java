@@ -24,6 +24,12 @@ public class ProductService {
 		
 	}
 	
+	public boolean isProductNameDuplicated(String productName) {
+		boolean result = false;
+		result = productRepository.findProductByProductName(productName) != null;
+		return result;
+	}
+	
 }
 
 

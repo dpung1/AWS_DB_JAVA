@@ -117,6 +117,11 @@ public class ProductRegiserFrame extends JFrame {
 				String productCategoryName = (String) CategoryComboBox.getSelectedItem();
 				if(CustomSwingTextUtil.isTextEmpty(contentPane, productCategoryName)) {return;}
 				
+				if(ProductService.getInstance().isProductNameDuplicated(prodcutName)) {
+					JOptionPane.showMessageDialog(contentPane, "이미 존재하는 상품명입니다.", "중복오류", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
 				Product product = Product.builder()
 						.productName(prodcutName)
 						.productPrice(Integer.parseInt(productPrice))
@@ -128,6 +133,7 @@ public class ProductRegiserFrame extends JFrame {
 					JOptionPane.showMessageDialog(contentPane, "상품등록 중 오류가 발생했습니다.", "등록오류", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
+				
 				
 				JOptionPane.showMessageDialog(contentPane, "상품을 등록하였습니다.", "등록성공", JOptionPane.PLAIN_MESSAGE);
 				CustomSwingTextUtil.clearTextField(productNameTextField);
