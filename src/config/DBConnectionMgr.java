@@ -40,7 +40,7 @@ public class DBConnectionMgr {
 
     private Vector connections = new Vector(10);
     private String _driver = "com.mysql.cj.jdbc.Driver", //com.mysql > cj > jdbc > Driver
-    _url = "jdbc:mysql://localhost:3306/study3",
+    _url = "jdbc:mysql://localhost:3306/product",
     _user = "root",
     _password = "1q2w3e4r";
     
