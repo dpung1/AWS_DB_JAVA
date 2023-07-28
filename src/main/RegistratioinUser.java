@@ -126,7 +126,7 @@ public class RegistratioinUser extends JFrame {
 	
 	public DefaultTableModel getUserTableModel() {
 		String[] header = new String[] { "user_id", "username", "password" };
-		
+	
 		List<List<Object>> userListAll = getUserListAll();
 		
 		Object[][] userModelArray = new Object[userListAll.size()][userListAll.get(0).size()];

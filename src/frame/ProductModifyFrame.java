@@ -25,11 +25,12 @@ import javax.swing.DefaultComboBoxModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class ProductRegiserFrame extends JFrame {
+public class ProductModifyFrame extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField productNameTextField;
 	private JTextField productPriceTextField;
+	private JTextField ProductIdTextField;
 
 	/**
 	 * Launch the application.
@@ -38,7 +39,7 @@ public class ProductRegiserFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ProductRegiserFrame frame = new ProductRegiserFrame();
+					ProductModifyFrame frame = new ProductModifyFrame(3);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -50,7 +51,7 @@ public class ProductRegiserFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ProductRegiserFrame() {
+	public ProductModifyFrame(int productId) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -59,10 +60,20 @@ public class ProductRegiserFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel titleLable = new JLabel("상품등록");
+		JLabel titleLable = new JLabel("상품 수정");
 		titleLable.setHorizontalAlignment(SwingConstants.CENTER);
 		titleLable.setBounds(12, 10, 410, 21);
 		contentPane.add(titleLable);
+		
+		JLabel productIdLabel = new JLabel("상품번호");
+		productIdLabel.setBounds(12, 41, 57, 21);
+		contentPane.add(productIdLabel);
+		
+		ProductIdTextField = new JTextField();
+		ProductIdTextField.setColumns(10);
+		ProductIdTextField.setBounds(81, 41, 341, 21);
+		ProductIdTextField.setEnabled(false);
+		contentPane.add(ProductIdTextField);
 		
 		JLabel productnameLabel = new JLabel("상품명");
 		productnameLabel.setBounds(12, 72, 57, 21);
@@ -100,8 +111,8 @@ public class ProductRegiserFrame extends JFrame {
 		CategoryComboBox.setBounds(81, 164, 341, 23);
 		contentPane.add(CategoryComboBox);
 		
-		JButton registerSubmitButton = new JButton("등록하기");
-		registerSubmitButton.addMouseListener(new MouseAdapter() {
+		JButton modifySubmitButton = new JButton("수정하기");
+		modifySubmitButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				
@@ -123,29 +134,35 @@ public class ProductRegiserFrame extends JFrame {
 				}
 				
 				Product product = Product.builder()
+						.productId(productId)
 						.productName(productName)
 						.productPrice(Integer.parseInt(productPrice))
 						.productColor(ProductColor.builder().productColorName(productColorName).build())
 						.productCategory(ProductCategory.builder().productCategoryName(productCategoryName).build())
 						.build();
 				
-				if(!ProductService.getInstance().registerProduct(product)) {
-					JOptionPane.showMessageDialog(contentPane, "상품등록 중 오류가 발생했습니다.", "등록오류", JOptionPane.ERROR_MESSAGE);
+				if(!ProductService.getInstance().modifyProduct(product)) {
+					JOptionPane.showMessageDialog(contentPane, "상품수정 중 오류가 발생했습니다.", "수정오류", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
-				JOptionPane.showMessageDialog(contentPane, "상품을 등록하였습니다.", "등록성공", JOptionPane.PLAIN_MESSAGE);
-				CustomSwingTextUtil.clearTextField(productNameTextField);
-				CustomSwingTextUtil.clearTextField(productPriceTextField);
-				colorComboBox.setSelectedIndex(0);
-				CategoryComboBox.setSelectedIndex(0);
+				JOptionPane.showMessageDialog(contentPane, "상품을 수정하였습니다.", "수정성공", JOptionPane.PLAIN_MESSAGE);
+				ProductSearchFrame.getInstance().setSearchProductTableModel();
+				dispose();
 			}
 		});
-		registerSubmitButton.setBounds(12, 196, 410, 55);
-		contentPane.add(registerSubmitButton);
+		modifySubmitButton.setBounds(12, 196, 410, 55);
+		contentPane.add(modifySubmitButton);
 		
+		Product product = ProductService.getInstance().getProductByProdcutId(productId);
 		
-		
-
+		if(product != null) {
+			ProductIdTextField.setText(Integer.toString(product.getProductId()));
+			productNameTextField.setText(product.getProductName());
+			productPriceTextField.setText(Integer.toString(product.getProductPrice()));
+			colorComboBox.setSelectedItem(product.getProductColor().getProductColorName());
+			CategoryComboBox.setSelectedItem(product.getProductCategory().getProductCategoryName());
+			
+		}
 	}
 }

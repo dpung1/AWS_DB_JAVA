@@ -6,7 +6,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import frame.ProductCategoryRegiserFrame;
+import frame.ProductColorRegiserFrame;
 import frame.ProductRegiserFrame;
+import frame.ProductSearchFrame;
 
 import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
@@ -52,11 +55,41 @@ public class ProductManagementApplication extends JFrame {
 				productRegiserFrame.setVisible(true);
 			}
 		});
-		productRegisterFrameOpenButton.setBounds(78, 121, 97, 23);
+		productRegisterFrameOpenButton.setBounds(12, 35, 410, 40);
 		contentPane.add(productRegisterFrameOpenButton);
 		
-		JButton productListFrameOpenButton = new JButton("상품조회");
-		productListFrameOpenButton.setBounds(250, 121, 97, 23);
-		contentPane.add(productListFrameOpenButton);
+		JButton productSearchFrameOpenButton = new JButton("상품조회");
+		productSearchFrameOpenButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				ProductSearchFrame productSearchFrame = 
+						ProductSearchFrame.getInstance();
+				productSearchFrame.setVisible(true);
+			}
+		});
+		productSearchFrameOpenButton.setBounds(12, 85, 410, 40);
+		contentPane.add(productSearchFrameOpenButton);
+		
+		JButton productColorRegisterFrameOpenButton = new JButton("상품색상등록");
+		productColorRegisterFrameOpenButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				ProductColorRegiserFrame productColorRegiserFrame= new ProductColorRegiserFrame();
+				productColorRegiserFrame.setVisible(true);
+			}
+		});
+		productColorRegisterFrameOpenButton.setBounds(12, 135, 410, 40);
+		contentPane.add(productColorRegisterFrameOpenButton);
+		
+		JButton productCategoryRegisterFrameOpenButton = new JButton("상품카테고리등록");
+		productCategoryRegisterFrameOpenButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				ProductCategoryRegiserFrame productCategoryRegiserFrame = new ProductCategoryRegiserFrame();
+				productCategoryRegiserFrame.setVisible(true);
+			}
+		});
+		productCategoryRegisterFrameOpenButton.setBounds(12, 185, 410, 40);
+		contentPane.add(productCategoryRegisterFrameOpenButton);
 	}
 }
