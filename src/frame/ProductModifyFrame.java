@@ -128,11 +128,7 @@ public class ProductModifyFrame extends JFrame {
 				String productCategoryName = (String) CategoryComboBox.getSelectedItem();
 				if(CustomSwingTextUtil.isTextEmpty(contentPane, productCategoryName)) {return;}
 				
-				if(ProductService.getInstance().isProductNameDuplicated(productName)) {
-					JOptionPane.showMessageDialog(contentPane, "이미 존재하는 상품명입니다.", "중복오류", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				
+						
 				Product product = Product.builder()
 						.productId(productId)
 						.productName(productName)

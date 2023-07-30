@@ -182,104 +182,50 @@ public class ProductRepository {
 	}
 	
 	public List<Product> getSearchProductList(String searchOption, String searchValue) {
-		
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		List<Product> productList = null;
-		
-		try {
-			con = pool.getConnection();
-			String sql = "select\r\n"
-					+ "	pt.product_id,\r\n"
-					+ "	pt.product_name,\r\n"
-					+ "	pt.product_price,\r\n"
-					+ "\r\n"
-					+ "	pt.product_color_id,\r\n"
-					+ "	pcot.product_color_name,\r\n"
-					+ "\r\n"
-					+ "	pt.product_category_id,\r\n"
-					+ "	pcat.product_category_name\r\n"
-					+ "from\r\n"
-					+ "	product_tb pt\r\n"
-					+ "	left outer join product_color_tb pcot\r\n"
-					+ "		on (pcot.product_color_id = pt.product_color_id)\r\n"
-					+ "	left outer join product_category_tb pcat\r\n"
-					+ "		on (pcat.product_category_id = pt.product_category_id)\r\n"
-					+ "where\r\n"
-					+ "	1 = 1 ";
-			
-			if(searchValue != null) {
-				if(!searchValue.isBlank()) {
-					String whereSql = null;
-					
-					switch (searchOption) {
-					case "전체":
-						whereSql = "and (pt.product_name like concat('%', ?, '%') "
-								+ "or pcot.product_color_name like concat('%', ?, '%') "
-								+ "or pcat.product_category_name like concat('%', ?, '%'))";
-						break;
-						
-					case "상품명":
-						whereSql = "and pt.product_name like concat('%', ?, '%')";
-						break;
-						
-					case "색상":
-						whereSql = "and pcot.product_color_name like concat('%', ?, '%')";
-						break;
-						
-					case "카테고리":
-						whereSql = "and pcat.product_category_name like concat('%', ?, '%')";
-						break;
-					}
-					
-					sql += whereSql;
-				}
-			}
-			
-			pstmt = con.prepareStatement(sql);
-			
-			if(searchValue != null) {
-				if(!searchValue.isBlank()) {
-					if(searchOption.equals("전체")) {
-						pstmt.setString(1, searchValue);
-						pstmt.setString(2, searchValue);
-						pstmt.setString(3, searchValue);
-					} else {
-						pstmt.setString(1, searchValue);
-					}
-				}
-			}
-			
-			rs = pstmt.executeQuery();
-			productList = new ArrayList<>();
-			
-			while(rs.next()) {
-				Product product = Product.builder()
-						.productId(rs.getInt(1))
-						.productName(rs.getString(2))
-						.productPrice(rs.getInt(3))
-						.productColor(ProductColor.builder()
-								.productColorId(rs.getInt(4))
-								.productColorName(rs.getNString(5))
-								.build())
-						.productCategory(ProductCategory.builder()
-								.productCategoryId(rs.getInt(6))
-								.productCategoryName(rs.getString(7))
-								.build())
-						.build();
-				
-				productList.add(product);
-				
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			pool.freeConnection(con, pstmt, rs);
-		}
-		
-		return productList;
+	    Connection con = null;
+	    CallableStatement cstmt = null;
+	    ResultSet rs = null;
+	    List<Product> productList = null;
+	    
+	    try {
+	        con = pool.getConnection();
+	        String sql = "{ call p_select_product(?, ?) }";
+	        
+	        cstmt = con.prepareCall(sql);
+	        
+	        cstmt.setString(1, searchOption);
+	        cstmt.setString(2, searchValue);
+	        
+	        rs = cstmt.executeQuery();
+	        
+	        productList = new ArrayList<>();
+	        
+	        while (rs.next()) {
+	            Product product = Product.builder()
+	                .productId(rs.getInt(1))
+	                .productName(rs.getString(2))
+	                .productPrice(rs.getInt(3))
+	                .productcolorId(rs.getInt(4))
+	                .productColor(ProductColor.builder()
+	                    .productColorId(rs.getInt(4))
+	                    .productColorName(rs.getString(5))
+	                    .build())
+	                .productcategoryId(rs.getInt(6))
+	                .productCategory(ProductCategory.builder()
+	                    .productCategoryId(rs.getInt(6))
+	                    .productCategoryName(rs.getString(7))
+	                    .build())
+	                .build();
+	            productList.add(product);
+	        }
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        pool.freeConnection(con);
+	    }
+	    
+	    return productList;
 	}
 	public int deleteProduct(int productId) {
 		
